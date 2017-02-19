@@ -20,6 +20,6 @@ Examples:
 ```
 
 ## Requirements    
-pup    
+[pup](https://github.com/ericchiang/pup)    
 curl   
 GNU parallel    
