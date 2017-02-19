@@ -25,6 +25,10 @@ function httpParsing() {
 		# Returns links on URL
 		LINKS=$(echo -e "$RESPONSE" | pup -p 'a json{}' | jq -r '.[].href')
 	}
+	function parseResponseForExt() {
+		# Returns links that match a specific file extension
+		LINKS=$(echo -e "$RESPONSE" | pup -p "a,img json{}" | jq -r '.[] | .href // .src' | grep -i "$TYPE$")
+	}
 	function escapeUrl() {
 		# expects url and returns escaped url. Useful when you need to use $URL in sed
 		echo "$1" | sed 's/\//\\\//g' 
@@ -50,6 +54,7 @@ function httpParsing() {
 		case "$TYPE" in # using shell expansion to dynamically set the command we'll execute based on our TYPE
 			img|IMG) parseType=${parseType=parseResponseForImg} ;; 
 			href|HREF) parseType=${parseType=parseResponseForHrefs} ;; 
+			.*) parseType=${parseType=parseResponseForExt} ;; # .ext 
 			*) echo "ERR: No valid type found" && exit 1 ;;
 		esac 
 		getResponse && $parseType && cleanLinks # Puts $RESPONSE in our env, parses based on our $TYPE, then cleans up and sets the LINKS env variable
@@ -72,7 +77,7 @@ function downloadFiles() {
 			if [ "$out" ]; then 
 				echo -e "$out"
 			else
-				echo "No file list provided." # if no link list found display an error
+				echo "No valid files found." # if no link list found display an error
 			fi
 		fi 
 	}
@@ -119,13 +124,14 @@ $0 [options]
 					Options: 
 						img - image files
 						href - pages that are linked
+						.ext - search for specific file extension
 -j, --threads 	sets the number of threads to use 
 -o, --out 		the directory which files will be downloaded to
 -s, --silent  	makes the script run with no output
 
 Examples:
-$0 -j 4 -o ~/Pictures -t img -u http://i.imgur.com
-$0 --silent --threads 4 --out ~/Pictures --type href --url http://i.imgur.com
+$0 -j 4 -o ~/Pictures -t img -u http://imgur.com
+$0 --silent --threads 4 --out ~/Pictures --type .jpg --url http://imgur.com
 
 
 help
