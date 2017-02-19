@@ -9,7 +9,13 @@ function httpParsing() {
 
 	function getResponse() {
 		# Set the HTTP response to a variable
-		RESPONSE=$(curl -s "$URL") 
+		declare -i respcode
+		respcode=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+		if ((respcode>=200)) && ((respcode<300)); then # If the response code is 200-299 
+			RESPONSE=$(curl -s "$URL") 
+		else 
+			echo "ERR: Server returned a $respcode"
+		fi
 	}
 	function parseResponseForImg() {
 		# Returns links to IMG files on URL
