@@ -17,3 +17,8 @@ Examples:
 ./downloadFrom.sh -j 4 -o ~/Pictures -t img -u http://i.imgur.com
 ./downloadFrom.sh --silent --threads 4 --out ~/Pictures --type href --url http://i.imgur.com
 ```
+
+## Requirements    
+pup    
+curl   
+GNU parallel    
