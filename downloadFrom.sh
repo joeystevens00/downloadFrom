@@ -50,7 +50,7 @@ function httpParsing() {
 		case "$TYPE" in # using shell expansion to dynamically set the command we'll execute based on our TYPE
 			img|IMG) parseType=${parseType=parseResponseForImg} ;; 
 			href|HREF) parseType=${parseType=parseResponseForHrefs} ;; 
-			*) echo "ERR: No valid type found" && exit 1 QUIET;;
+			*) echo "ERR: No valid type found" && exit 1 ;;
 		esac 
 		getResponse && $parseType && cleanLinks # Puts $RESPONSE in our env, parses based on our $TYPE, then cleans up and sets the LINKS env variable
 
